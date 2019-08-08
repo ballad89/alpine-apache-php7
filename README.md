@@ -48,7 +48,7 @@ __PHP_REPORT_MEMLEAKS:__ Maps to php.ini 'report_memleaks'
 
 __PHP_HTML_ERRORS:__ Maps to php.ini 'html_errors'
 
-__PHP_ERROR_LOG:__ Maps to php.ini 'error_log'
+<!-- __PHP_ERROR_LOG:__ Maps to php.ini 'error_log' -->
 
 __PHP_POST_MAX_SIZE:__ Maps to php.ini 'post_max_size'
 

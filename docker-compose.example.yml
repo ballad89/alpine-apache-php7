@@ -13,14 +13,14 @@ services:
       - PHP_DISPLAY_ERRORS=On
       - PHP_HTML_ERRORS=On
       - PHP_XDEBUG_ENABLED=true
-    networks:
-      - default
+    # networks:
+    #   - default
     volumes:
-      - ./public:/app
+      - ./public:/app/public
     cap_add:
       - SYS_TIME
       - SYS_NICE
-networks:
-  default:
-    external:
-      name: docker_docker-localhost
+# networks:
+#   default:
+#     external:
+#       name: docker_docker-localhost

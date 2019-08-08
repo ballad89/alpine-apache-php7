@@ -90,6 +90,8 @@ RUN apk add php7-simplexml
 RUN cp /usr/bin/php7 /usr/bin/php \
     && rm -f /var/cache/apk/*
 
+ADD httpd.conf /etc/apache2/httpd.conf
+
 # Add apache to run and configure
 RUN sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf \
     && sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf \
