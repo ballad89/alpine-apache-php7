@@ -18,6 +18,8 @@ Various env vars can be set at runtime via your docker command or docker-compose
 
 __APACHE_SERVER_NAME:__ Change server name to match your domain name in httpd.conf
 
+__LOG_LEVEL:__ Change log level in httpd.conf
+
 __PHP_SHORT_OPEN_TAG:__ Maps to php.ini 'short_open_tag'
 
 __PHP_OUTPUT_BUFFERING:__ Maps to php.ini 'output_buffering'
