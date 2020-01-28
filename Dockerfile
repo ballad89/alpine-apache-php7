@@ -50,57 +50,63 @@ RUN apk add \
 	php7-apcu
 
 RUN apk add -U \
-        libmemcached \
-        php7-dev \
-        libmemcached-libs \
-        php7-pecl-memcached
+	libmemcached \
+	php7-dev \
+	libmemcached-libs \
+	php7-pecl-memcached
 
 RUN apk add --update \
-        autoconf \
-        file \
-        g++ \
-        gcc \
-        libc-dev \
-        make \
-        pkgconf \
-        re2c \
-        zlib-dev \
-        libmemcached-dev && \
-    cd /tmp && \
-    wget https://github.com/php-memcached-dev/php-memcached/archive/v3.1.3.zip && \
-    unzip v3.1.3.zip && \
-    cd php-memcached-3.1.3 && \
-    phpize7 || return 1 && \
-    ./configure --prefix=/usr --disable-memcached-sasl --with-php-config=php-config7 || return 1 && \
-    make || return 1 && \
-    make INSTALL_ROOT="" install || return 1 && \
-    install -d "/etc/php7/conf.d" || return 1 && \
-    echo "extension=memcached.so" > /etc/php7/conf.d/20_memcached.ini && \
-    cd /tmp && rm -rf php-memcached-3.1.3 && rm v3.1.3.zip
+	autoconf \
+	file \
+	g++ \
+	gcc \
+	libc-dev \
+	make \
+	pkgconf \
+	re2c \
+	zlib-dev \
+	libmemcached-dev && \
+	cd /tmp && \
+	wget https://github.com/php-memcached-dev/php-memcached/archive/v3.1.3.zip && \
+	unzip v3.1.3.zip && \
+	cd php-memcached-3.1.3 && \
+	phpize7 || return 1 && \
+	./configure --prefix=/usr --disable-memcached-sasl --with-php-config=php-config7 || return 1 && \
+	make || return 1 && \
+	make INSTALL_ROOT="" install || return 1 && \
+	install -d "/etc/php7/conf.d" || return 1 && \
+	echo "extension=memcached.so" > /etc/php7/conf.d/20_memcached.ini && \
+	cd /tmp && rm -rf php-memcached-3.1.3 && rm v3.1.3.zip
 
 
 RUN rm -f /var/cache/apk/*
 
+ADD patch-cert-store.sh .
+
+RUN chmod a+x patch-cert-store.sh 
+
+RUN ./patch-cert-store.sh
+
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
-    ln -sf /proc/self/fd/1 /var/log/apache2/error.log
+	ln -sf /proc/self/fd/1 /var/log/apache2/error.log
 
 # Problems installing in above stack
 RUN apk add php7-simplexml
 
 RUN cp /usr/bin/php7 /usr/bin/php \
-    && rm -f /var/cache/apk/*
+	&& rm -f /var/cache/apk/*
 
 ADD httpd.conf /etc/apache2/httpd.conf
 
 # Add apache to run and configure
 RUN sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf \
-    && sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf \
-    && sed -i "s/#LoadModule\ session_cookie_module/LoadModule\ session_cookie_module/" /etc/apache2/httpd.conf \
-    && sed -i "s/#LoadModule\ session_crypto_module/LoadModule\ session_crypto_module/" /etc/apache2/httpd.conf \
-    && sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf \
-    && sed -i "s#^DocumentRoot \".*#DocumentRoot \"/app/public\"#g" /etc/apache2/httpd.conf \
-    && sed -i "s#/var/www/localhost/htdocs#/app/public#" /etc/apache2/httpd.conf \
-    && printf "\n<Directory \"/app/public\">\n\tAllowOverride All\n</Directory>\n" >> /etc/apache2/httpd.conf
+	&& sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf \
+	&& sed -i "s/#LoadModule\ session_cookie_module/LoadModule\ session_cookie_module/" /etc/apache2/httpd.conf \
+	&& sed -i "s/#LoadModule\ session_crypto_module/LoadModule\ session_crypto_module/" /etc/apache2/httpd.conf \
+	&& sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf \
+	&& sed -i "s#^DocumentRoot \".*#DocumentRoot \"/app/public\"#g" /etc/apache2/httpd.conf \
+	&& sed -i "s#/var/www/localhost/htdocs#/app/public#" /etc/apache2/httpd.conf \
+	&& printf "\n<Directory \"/app/public\">\n\tAllowOverride All\n</Directory>\n" >> /etc/apache2/httpd.conf
 
 RUN mkdir /app && mkdir /app/public && chown -R apache:apache /app && chmod -R 755 /app && mkdir bootstrap
 ADD start.sh /bootstrap/
