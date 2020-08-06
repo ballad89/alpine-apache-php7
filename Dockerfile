@@ -98,6 +98,8 @@ RUN cp /usr/bin/php7 /usr/bin/php \
 
 ADD httpd.conf /etc/apache2/httpd.conf
 
+ADD mpm.conf /etc/apache2/conf.d/mpm.conf
+
 # Add apache to run and configure
 RUN sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf \
 	&& sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf \
